@@ -1,0 +1,38 @@
+# Import Radar Roster
+
+- Use this instruction when processing a manual bench-roster export from `Radar.epam.com`.
+- Treat Radar as a file-based source for this project; do not assume a live API is available.
+- Input format:
+  - Accept one CSV file path supplied by the user or calling workflow.
+  - Require fields representing employee identifier, employee name, skill track, and bench start date.
+  - Resolve exact source column names through an explicit mapping when the export headers differ from the logical field names.
+  - Do not invent missing source columns or silently map an ambiguous header.
+  - Preserve unrecognized columns only when the caller explicitly requests passthrough data.
+  - Support UTF-8 CSV input and report the detected delimiter or encoding when parsing requires a non-default value.
+- Processing steps:
+  - Confirm that the input file exists and is a regular file before reading it.
+  - Read the header row and validate all required logical fields.
+  - Trim surrounding whitespace from headers and values without changing employee identifiers.
+  - Normalize blank values to validation errors for required fields.
+  - Parse bench start dates and normalize valid values to `YYYY-MM-DD`.
+  - Preserve the source employee identifier as the stable roster key; do not use a name as a substitute.
+  - Normalize track names only through an explicit known mapping; preserve the original track value for reporting.
+  - Mark supported pilot tracks as assessable and other tracks as `not_yet_assessable`.
+  - Detect duplicate employee identifiers and report every conflicting row; do not silently merge records.
+  - Keep valid rows separate from rejected rows so one malformed row does not hide other import errors.
+  - Avoid writing to the application database or overwriting files unless the caller explicitly requests the import operation.
+- Output format:
+  - Return a structured result with `source`, `status`, `records`, `rejected_rows`, and `warnings`.
+  - Represent each accepted record with `employee_id`, `name`, `track`, `bench_start_date`, and `assessment_status`.
+  - Use `assessment_status` values `assessable` or `not_yet_assessable`.
+  - Represent each rejected row with its 1-based `row_number`, `errors`, and, when safe, the source values needed to correct it.
+  - Include counts for accepted, rejected, duplicate, and not-yet-assessable rows.
+  - State whether the result is ready for import; a successful parse is not an authorization to persist data.
+- Constraints:
+  - Do not call Radar or claim that the CSV is current; process only the supplied export.
+  - Do not expose credentials, access tokens, personal data, or full roster contents in logs or chat unless explicitly required.
+  - Do not include assessment scores, readiness decisions, or inferred employee attributes in the roster import.
+  - Do not discard source data or modify the original CSV.
+  - Fail clearly when required fields, date values, encoding, or row structure cannot be validated.
+  - Keep the pilot-track list configurable; do not treat the current six-track scope as the complete Radar taxonomy.
+  - Ask for confirmation or a sample export before finalizing a column mapping when the Radar schema is unknown.
