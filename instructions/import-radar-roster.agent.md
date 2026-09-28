@@ -1,5 +1,6 @@
 # Import Radar Roster
 
+- Follow `./instructions/write-reliable-output.agent.md`.
 - Use this instruction when processing a manual bench-roster export from `Radar.epam.com`.
 - Treat Radar as a file-based source for this project; do not assume a live API is available.
 - Input format:

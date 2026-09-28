@@ -13,3 +13,7 @@ Each entry below is an instruction file with a one-line description. Load the ma
 - [`./instructions/import-radar-roster.agent.md`](./import-radar-roster.agent.md) — validate and normalize a manual Radar bench-roster CSV for import.
   + Keywords: Radar.epam.com, Radar export, Radar CSV, bench roster, roster import
   + Exceptions: do not assume exact Radar headers or a live API; require an explicit mapping when headers are unknown.
+
+- [`./instructions/write-reliable-output.agent.md`](./write-reliable-output.agent.md) — apply shared rules for precise, evidence-based workflow output.
+  + Keywords: reliable output, validation result, missing data, unsupported claim
+  + Target: instructions that produce reports, import results, or validation summaries
