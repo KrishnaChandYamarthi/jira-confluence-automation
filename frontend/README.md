@@ -34,5 +34,13 @@ redirects to sign-in, while other failures remain visible with the safe backend
 error code/message and request ID. The current backend session endpoint is a
 placeholder until the SSO task is implemented.
 
+An optional backend-controlled local demo can exercise sign-in and navigation.
+Enable it as described in the backend README, use the matching loopback frontend
+origin, and acknowledge the warning on the sign-in form. Protected pages then show
+a persistent demo warning and a Sign out button. No identity tokens are stored in
+browser JavaScript. The demo is not company SAML or Atlassian OAuth; feature pages
+and provider API routes remain placeholders. With the demo disabled, existing
+unimplemented-session error behavior is unchanged.
+
 Run `npm test` for the frontend shell, routes, session guard, API client, and
 error-boundary tests.

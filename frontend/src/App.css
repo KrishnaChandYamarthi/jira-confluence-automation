@@ -234,6 +234,33 @@
   background: #123f72;
 }
 
+.reload-button:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.mock-login-form,
+.mock-session-banner {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.mock-session-banner {
+  width: min(100%, 48rem);
+  padding: 1.25rem;
+  border: 1px solid #cfe7df;
+  border-radius: 0.875rem;
+  background: #f3faf7;
+  color: #244d43;
+}
+
+.mock-confirmation {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  line-height: 1.5;
+}
+
 :focus-visible {
   outline: 3px solid #b34c12;
   outline-offset: 3px;

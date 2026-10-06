@@ -37,12 +37,41 @@ export function parseEnv(source) {
   if (!["development", "test", "production"].includes(nodeEnv)) {
     throw new Error("NODE_ENV must be development, test, or production.");
   }
+  getMockAuthConfig(source);
 
   return Object.freeze({ port, nodeEnv });
 }
 
 export function getEnv() {
   return parseEnv(process.env);
+}
+
+export function getMockAuthConfig(source = process.env) {
+  const flag = source.MOCK_AUTH_ENABLED ?? "false";
+  if (!["true", "false"].includes(flag)) {
+    throw new Error("MOCK_AUTH_ENABLED must be true or false.");
+  }
+  const enabled = flag === "true";
+  if (enabled && (source.NODE_ENV ?? "development") !== "development") {
+    throw new Error("Mock authentication is allowed only in development.");
+  }
+  const origin = source.MOCK_AUTH_ORIGIN ?? "http://127.0.0.1:5173";
+  if (enabled) {
+    let url;
+    try {
+      url = new URL(origin);
+    } catch {
+      throw new Error("MOCK_AUTH_ORIGIN must be a loopback HTTP origin.");
+    }
+    if (
+      url.protocol !== "http:" ||
+      !["127.0.0.1", "localhost", "[::1]"].includes(url.hostname) ||
+      url.origin !== origin
+    ) {
+      throw new Error("MOCK_AUTH_ORIGIN must be a loopback HTTP origin.");
+    }
+  }
+  return Object.freeze({ enabled, origin });
 }
 
 export function getDatabaseUrl(source = process.env) {

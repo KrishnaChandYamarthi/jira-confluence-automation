@@ -29,6 +29,30 @@ configuration described below.
 
 ## API response conventions
 
+### Optional local mock sign-in
+
+Company SAML integration is not implemented. To test navigation without an identity
+provider, explicitly set `MOCK_AUTH_ENABLED=true` with `NODE_ENV=development` in
+`backend/.env` or the process environment and restart the backend. The server binds
+to `127.0.0.1` in this mode. Visit `http://127.0.0.1:5173/login`, acknowledge the demo
+warning, and submit "Sign in to local demo". `MOCK_AUTH_ORIGIN` defaults to that
+frontend origin; change it to an exact loopback HTTP origin if using a different
+local port/hostname.
+
+This opt-in uses a fixed local demo identity and an opaque, HttpOnly, SameSite=Strict
+cookie. Sessions are held only in backend memory, expire after one hour, and are
+invalidated on sign-out or backend restart. Sign-in/sign-out require the configured
+Origin. Mock mode is rejected outside development and is disabled by default.
+It is not SAML, cannot certify company authentication, and does not authorize or
+implement Atlassian operations. Never deploy this mode or connect it to production
+provider data. The local HTTP cookie deliberately lacks Secure; real SSO must use
+HTTPS, Secure cookies and the approved organization's identity/session policies.
+
+`GET /api/auth/config` reports whether the demo is enabled. With mock mode enabled,
+`GET /api/auth/session` returns 401 for missing/expired sessions, and returns the
+demo user plus `authentication: "mock"` for a valid session. When disabled, the
+session and mock sign-in endpoints remain unimplemented (501).
+
 `GET /health` returns HTTP 200 and `{"status":"ok"}`. Every request receives a
 server-generated `X-Request-Id`. Errors use a JSON envelope such as
 `{"error":{"code":"validation_failed","message":"Request validation failed.","requestId":"<uuid>","details":[{"field":"summary","code":"required","message":"summary is required."}]}}`.

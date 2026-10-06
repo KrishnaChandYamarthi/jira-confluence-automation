@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Navigate, Outlet, useLocation } from "react-router-dom";
-import { ApiClientError, getSession } from "../api/client.js";
+import { apiRequest, ApiClientError, getSession } from "../api/client.js";
 
 function hasAuthenticatedUser(session) {
   return (
@@ -15,6 +15,8 @@ function RequireSession() {
   const location = useLocation();
   const [attempt, setAttempt] = useState(0);
   const [sessionState, setSessionState] = useState({ status: "loading" });
+  const [logoutError, setLogoutError] = useState(null);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     let active = true;
@@ -27,7 +29,7 @@ function RequireSession() {
         }
 
         if (hasAuthenticatedUser(session)) {
-          setSessionState({ status: "authenticated" });
+          setSessionState({ status: "authenticated", authentication: session.authentication });
           return;
         }
 
@@ -114,7 +116,33 @@ function RequireSession() {
     );
   }
 
-  return <Outlet />;
+  async function signOut() {
+    setSigningOut(true);
+    setLogoutError(null);
+    try {
+      await apiRequest("/api/auth/logout", { method: "POST", body: {} });
+      setSessionState({ status: "unauthenticated" });
+    } catch (error) {
+      setLogoutError(error instanceof ApiClientError ? error.message : "Sign-out failed. Try again.");
+    } finally {
+      setSigningOut(false);
+    }
+  }
+
+  return (
+    <>
+      {sessionState.authentication === "mock" ? (
+        <aside className="mock-session-banner" aria-label="Development demo session">
+          <p>Local demo user: mock session only. Company SAML and Atlassian authorization are not connected.</p>
+          <button className="reload-button" type="button" onClick={signOut} disabled={signingOut}>
+            {signingOut ? "Signing out..." : "Sign out"}
+          </button>
+          {logoutError ? <p role="alert">{logoutError}</p> : null}
+        </aside>
+      ) : null}
+      <Outlet />
+    </>
+  );
 }
 
 export default RequireSession;
