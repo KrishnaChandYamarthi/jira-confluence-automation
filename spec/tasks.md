@@ -145,7 +145,7 @@ observable and redacted.
 
 ### T007 — React 18 and Vite scaffold
 
-- [ ] T007 [P] [Plan:2.1] Create the React 18/Vite frontend app and pinned dependency configuration.
+- [x] T007 [P] [Plan:2.1] Create the React 18/Vite frontend app and pinned dependency configuration.
 - **Requirements**: REQ-023, REQ-034
 - **Files**: `frontend/package.json`, `frontend/package-lock.json` (or chosen package
   manager lockfile), `frontend/vite.config.js`, `frontend/index.html`,
