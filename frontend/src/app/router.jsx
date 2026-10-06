@@ -8,6 +8,7 @@ import {
   Routes,
   useLocation,
 } from "react-router-dom";
+import RequireSession from "../auth/RequireSession.jsx";
 import ConnectionsPage from "../features/connections/ConnectionsPage.jsx";
 import ConfluencePagesPage from "../features/confluence/ConfluencePagesPage.jsx";
 import LoginPage from "../features/auth/LoginPage.jsx";
@@ -89,10 +90,12 @@ function ApplicationRoutes() {
       <Route element={<ApplicationLayout />}>
         <Route index element={<HomePage />} />
         <Route path="login" element={<LoginPage />} />
-        <Route path="connections" element={<ConnectionsPage />} />
-        <Route path="jira/issues" element={<JiraIssuesPage />} />
-        <Route path="confluence/pages" element={<ConfluencePagesPage />} />
-        <Route path="operations" element={<OperationsPage />} />
+        <Route element={<RequireSession />}>
+          <Route path="connections" element={<ConnectionsPage />} />
+          <Route path="jira/issues" element={<JiraIssuesPage />} />
+          <Route path="confluence/pages" element={<ConfluencePagesPage />} />
+          <Route path="operations" element={<OperationsPage />} />
+        </Route>
         <Route path="*" element={<NotFoundPage />} />
       </Route>
     </Routes>

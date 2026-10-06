@@ -126,6 +126,14 @@
   line-height: 1.7;
 }
 
+.request-id {
+  margin: 1rem 0 0;
+  color: #53657a;
+  font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+  font-size: 0.875rem;
+  overflow-wrap: anywhere;
+}
+
 .home-link {
   display: inline-block;
   margin-top: 1.5rem;

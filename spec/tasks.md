@@ -178,7 +178,7 @@ observable and redacted.
 
 ### T009 — Session-aware API client and route guard
 
-- [ ] T009 [P] [Plan:2.2] Add a session-aware API client and protected route guard without storing Atlassian credentials in the browser.
+- [x] T009 [P] [Plan:2.2] Add a session-aware API client and protected route guard without storing Atlassian credentials in the browser.
 - **Requirements**: REQ-002, REQ-023, REQ-028, REQ-033
 - **Files**: `frontend/src/api/client.js`, `frontend/src/auth/RequireSession.jsx`,
   `frontend/src/app/router.jsx`

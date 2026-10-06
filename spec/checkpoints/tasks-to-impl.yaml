@@ -5,10 +5,10 @@ metadata:
 
 summary:
   total_tasks: 40
-  completed_tasks: 8
+  completed_tasks: 9
   in_progress_tasks: 0
-  pending_tasks: 32
-  completion_percentage: 20.0
+  pending_tasks: 31
+  completion_percentage: 22.5
 
 tasks:
   - task_id: "T001"
@@ -584,7 +584,7 @@ tasks:
         - file: "frontend/src/app/router.jsx"
           changes:
             - line_start: 1
-              line_end: 108
+              line_end: 111
               change_type: "added"
               description: "Define SPA routes, shared accessible navigation, and route-specific document titles"
         - file: "frontend/src/app/RoutePage.jsx"
@@ -638,19 +638,19 @@ tasks:
         - file: "frontend/src/app/router.test.jsx"
           changes:
             - line_start: 1
-              line_end: 96
+              line_end: 205
               change_type: "added"
               description: "Test all route headings/titles, client-side navigation, and unknown-path recovery"
         - file: "frontend/src/App.css"
           changes:
             - line_start: 1
-              line_end: 250
+              line_end: 258
               change_type: "modified"
               description: "Style the navigation and responsive route shells with visible keyboard focus"
         - file: "frontend/README.md"
           changes:
             - line_start: 1
-              line_end: 26
+              line_end: 38
               change_type: "modified"
               description: "Document the route shells as navigation-only placeholders and include route tests"
         - file: "spec/tasks.md"
@@ -673,8 +673,86 @@ tasks:
       requirements: ["REQ-002", "REQ-021", "REQ-023"]
       full_trace: "REQ-002/021/023 -> Phase-2 Step-2.2 -> T008 -> accessible client-side route shells and unknown-route handling; authentication and provider behavior remain future tasks"
 
+  - task_id: "T009"
+    description: "Add a credentialed session-aware API client and protect feature routes without exposing Atlassian credentials"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "frontend/src/api/client.js"
+          changes:
+            - line_start: 1
+              line_end: 64
+              change_type: "added"
+              description: "Send JSON requests with credentialed cookie transport and preserve safe API error details/request IDs"
+        - file: "frontend/src/api/client.test.js"
+          changes:
+            - line_start: 1
+              line_end: 91
+              change_type: "added"
+              description: "Verify API origin, credentials include, no JavaScript Cookie header, and error details/request-ID fallback"
+        - file: "frontend/src/auth/RequireSession.jsx"
+          changes:
+            - line_start: 1
+              line_end: 120
+              change_type: "added"
+              description: "Check the application session, withhold protected content while loading, redirect HTTP 401, and display retryable safe errors"
+        - file: "frontend/src/app/router.jsx"
+          changes:
+            - line_start: 1
+              line_end: 111
+              change_type: "modified"
+              description: "Place connections, Jira, Confluence, and operation routes behind the session guard; keep login public"
+        - file: "frontend/src/app/router.test.jsx"
+          changes:
+            - line_start: 1
+              line_end: 205
+              change_type: "modified"
+              description: "Test pending-session privacy, 401 redirect, and safe backend error code/message/request-ID rendering"
+        - file: "frontend/vite.config.js"
+          changes:
+            - line_start: 1
+              line_end: 17
+              change_type: "modified"
+              description: "Proxy local /api requests through the same frontend origin to the backend"
+        - file: "frontend/.env.example"
+          changes:
+            - line_start: 1
+              line_end: 2
+              change_type: "modified"
+              description: "Default local frontend configuration to same-origin API requests through the Vite proxy"
+        - file: "frontend/src/App.css"
+          changes:
+            - line_start: 1
+              line_end: 258
+              change_type: "modified"
+              description: "Style the retryable session error and request-correlation details"
+        - file: "frontend/README.md"
+          changes:
+            - line_start: 1
+              line_end: 38
+              change_type: "modified"
+              description: "Document the selected HttpOnly Secure SameSite cookie transport, API contract, CSRF boundary, and local proxy"
+        - file: "spec/tasks.md"
+          changes:
+            - line_start: 181
+              line_end: 181
+              change_type: "modified"
+              description: "Mark T009 complete after client, guard, and route verification pass"
+    verification:
+      build_passed: true
+      test_results:
+        command: "npm run build; npm test; npm audit"
+        passed: 15
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "All 15 frontend tests and the production build passed; npm audit reported zero vulnerabilities. With the backend auth route still a 501 placeholder, the live Vite proxy returned the safe error envelope, and the guard displayed its error code, message, and request ID instead of protected content. A source scan found no browser storage, JavaScript cookie access, Atlassian API URL, or provider token handling."
+    upstream_trace:
+      plan_item: "2.2"
+      requirements: ["REQ-002", "REQ-023", "REQ-028", "REQ-033"]
+      full_trace: "REQ-002/023/028/033 -> Phase-2 Step-2.2 -> T009 -> credentialed session API client, safe correlation errors, and protected-route states; server-side SSO is implemented later"
+
 pending_tasks:
-  - "T009"
   - "T010"
   - "T011"
   - "T012"
@@ -824,6 +902,21 @@ traceability_chain:
       - "frontend/src/features/confluence/ConfluencePagesPage.jsx"
       - "frontend/src/features/operations/OperationsPage.jsx"
       - "frontend/src/app/router.test.jsx"
+    status: "complete"
+  - chain_id: "TRACE-002-023-028-033"
+    requirement: "REQ-002, REQ-023, REQ-028, REQ-033"
+    plan_phase: "Phase-2"
+    plan_item: "2.2"
+    tasks: ["T009"]
+    files:
+      - "frontend/src/api/client.js"
+      - "frontend/src/auth/RequireSession.jsx"
+      - "frontend/src/app/router.jsx"
+      - "frontend/src/api/client.test.js"
+      - "frontend/src/app/router.test.jsx"
+      - "frontend/vite.config.js"
+      - "frontend/.env.example"
+      - "frontend/README.md"
     status: "complete"
 
 validation:
