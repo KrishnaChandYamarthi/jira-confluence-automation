@@ -241,7 +241,10 @@ their distinct status, privacy boundaries, and one-year retention policy.
   write, it MUST durably persist a pending operation record including the proposed
   change summary and a unique request identifier; repeated submissions with the same
   identifier MUST return the existing operation rather than issue a second provider
-  write. If the pending record cannot be persisted, the provider write MUST NOT be sent.
+  write. A request identifier MUST be unique per authenticated user across all
+  operation types; reusing it with a different action or payload MUST be rejected
+  without contacting the provider. If the pending record cannot be persisted, the
+  provider write MUST NOT be sent.
 - **REQ-016**: The system MUST distinguish pending, completed, failed, and uncertain
   operation outcomes; it MUST report success only when the provider success has been
   confirmed and the local operation record has been updated accordingly.

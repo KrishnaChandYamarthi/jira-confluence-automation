@@ -23,8 +23,9 @@ root pins the Node.js patch version used for development.
    `{"status":"ok"}`.
 
 `NODE_ENV` is optional and defaults to `development`. When supplied, it must be
-`development`, `test`, or `production`. The server currently needs no database,
-SSO, or Atlassian credentials; those integrations are added in later tasks.
+`development`, `test`, or `production`. The HTTP server does not yet require database,
+SSO, or Atlassian credentials; the migration command uses the local database
+configuration described below.
 
 ## Local database connection
 
@@ -35,7 +36,17 @@ default development database is `jira_automation` on port `5432`. Compose stores
 database files in the named `postgres_data` volume. Do not use these local
 development credentials outside a disposable development environment.
 
+## Database migrations
+
+After PostgreSQL is healthy, run `npm run migrate` from `backend/`. The migration
+runner applies numbered SQL files once, records their SHA-256 checksums, and rejects
+changes to an already-applied migration. The initial schema keeps Atlassian token
+material in encrypted binary fields only. It scopes idempotency request IDs to the
+requesting user across operation types; provider-operation code must reject reuse
+with a different request fingerprint.
+
 ## Checks
 
 Run `npm run build` for JavaScript syntax checks and `npm test` for the Node.js
-test suite.
+test suite. The PostgreSQL migration tests require the local Compose database and
+the private root `.env` settings.

@@ -69,7 +69,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T003 — Migration runner and initial schema
 
-- [ ] T003 [Plan:1.2] Add the migration runner and initial versioned schema for users, provider connections, operations, audit metadata, and expiry.
+- [x] T003 [Plan:1.2] Add the migration runner and initial versioned schema for users, provider connections, operations, audit metadata, and expiry.
 - **Requirements**: REQ-015, REQ-016, REQ-017, REQ-022, REQ-026, REQ-027, REQ-035
 - **Files**: `backend/package.json`, `backend/migrations/`, `backend/src/db/`,
   `backend/src/config/env.js`
@@ -81,7 +81,8 @@ hosting inputs remain gates as recorded in the source plan.
      operation lifecycle states, requester ownership, audit timestamps, and a
      retention-expiry timestamp.
   3. Provider connection schema stores only required metadata and encrypted token
-     material; fixtures and migrations contain no real tokens.
+     material; request identifiers are unique per user across operation types;
+     fixtures and migrations contain no real tokens.
   4. Re-running the migration command does not apply the same migration twice or
      corrupt the schema; migration failure is reported and exits unsuccessfully.
 

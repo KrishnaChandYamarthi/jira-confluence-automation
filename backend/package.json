@@ -9,11 +9,13 @@
   "scripts": {
     "start": "node src/server.js",
     "dev": "node --watch src/server.js",
-    "build": "node --check src/server.js && node --check src/app.js && node --check src/config/env.js",
-    "test": "node --test"
+    "build": "node --check src/server.js && node --check src/app.js && node --check src/config/env.js && node --check src/db/pool.js && node --check src/db/migrate-runner.js && node --check src/db/migrate.js",
+    "test": "node --test",
+    "migrate": "node src/db/migrate.js"
   },
   "dependencies": {
     "dotenv": "18.0.5",
-    "express": "5.2.1"
+    "express": "5.2.1",
+    "pg": "8.23.1"
   }
 }

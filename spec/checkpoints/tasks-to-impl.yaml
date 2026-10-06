@@ -5,10 +5,10 @@ metadata:
 
 summary:
   total_tasks: 40
-  completed_tasks: 2
+  completed_tasks: 3
   in_progress_tasks: 0
-  pending_tasks: 38
-  completion_percentage: 5.0
+  pending_tasks: 37
+  completion_percentage: 7.5
 
 tasks:
   - task_id: "T001"
@@ -133,8 +133,98 @@ tasks:
       requirements: ["REQ-026", "REQ-034"]
       full_trace: "REQ-026/REQ-034 -> Phase-1 Step-1.2 -> T002 -> compose.yaml and local DB setup documentation"
 
+  - task_id: "T003"
+    description: "Add versioned migrations and the initial persistence schema"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "backend/package.json"
+          changes:
+            - line_start: 10
+              line_end: 20
+              change_type: "modified"
+              description: "Add the PostgreSQL migration script, pg client dependency, and syntax-check targets"
+        - file: "backend/package-lock.json"
+          changes:
+            - line_start: 1
+              line_end: 1055
+              change_type: "modified"
+              description: "Lock pg 8.23.1 and its transitive dependencies"
+        - file: "backend/src/config/env.js"
+          changes:
+            - line_start: 5
+              line_end: 92
+              change_type: "modified"
+              description: "Load root/backend local environment files and validate/build PostgreSQL connection URLs without exposing credentials"
+        - file: "backend/src/db/pool.js"
+          changes:
+            - line_start: 1
+              line_end: 14
+              change_type: "added"
+              description: "Create a bounded PostgreSQL connection pool"
+        - file: "backend/src/db/migrate-runner.js"
+          changes:
+            - line_start: 1
+              line_end: 116
+              change_type: "added"
+              description: "Apply ordered SQL migrations under an advisory lock, record checksums, skip applied migrations, and roll back failures"
+        - file: "backend/src/db/migrate.js"
+          changes:
+            - line_start: 1
+              line_end: 23
+              change_type: "added"
+              description: "Expose the migration CLI with non-zero failure exit status"
+        - file: "backend/migrations/001_initial_schema.sql"
+          changes:
+            - line_start: 1
+              line_end: 95
+              change_type: "added"
+              description: "Create user, encrypted provider connection, requester-owned operation, and audit-event tables with lifecycle/idempotency/retention constraints"
+        - file: "backend/tests/config/env.test.js"
+          changes:
+            - line_start: 1
+              line_end: 61
+              change_type: "modified"
+              description: "Test safe DB URL construction and rejection of invalid settings"
+        - file: "backend/tests/integration/migrations.test.js"
+          changes:
+            - line_start: 1
+              line_end: 246
+              change_type: "added"
+              description: "Test PostgreSQL migration ordering, idempotency, ownership, lifecycle, encrypted fields, rollback, and checksums in isolated schemas"
+        - file: "backend/README.md"
+          changes:
+            - line_start: 39
+              line_end: 52
+              change_type: "modified"
+              description: "Document migration use and DB-backed test prerequisites"
+        - file: "spec/specification.md"
+          changes:
+            - line_start: 244
+              line_end: 251
+              change_type: "modified"
+              description: "Specify request-ID uniqueness per authenticated user and reject conflicting reuse"
+        - file: "spec/tasks.md"
+          changes:
+            - line_start: 72
+              line_end: 85
+              change_type: "modified"
+              description: "Clarify T003 idempotency scope and mark task complete"
+    verification:
+      build_passed: true
+      test_results:
+        command: "npm ci --ignore-scripts; npm run build; npm test"
+        passed: 13
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Against live PostgreSQL 15.14, first npm run migrate applied migration 001 and the second applied zero; schema_migrations and all four domain tables were verified. Simulated connection failure exited 1 without echoing credentials."
+    upstream_trace:
+      plan_item: "1.2"
+      requirements: ["REQ-015", "REQ-016", "REQ-017", "REQ-022", "REQ-026", "REQ-027", "REQ-035"]
+      full_trace: "REQ-015/016/017/022/026/027/035 -> Phase-1 Step-1.2 -> T003 -> migration runner and PostgreSQL schema"
+
 pending_tasks:
-  - "T003"
   - "T004"
   - "T005"
   - "T006"
@@ -203,6 +293,18 @@ traceability_chain:
       - "backend/README.md"
       - "backend/tests/config/env.test.js"
       - "backend/tests/app.test.js"
+    status: "complete"
+  - chain_id: "TRACE-015-035"
+    requirement: "REQ-015, REQ-016, REQ-017, REQ-022, REQ-026, REQ-027, REQ-035"
+    plan_phase: "Phase-1"
+    plan_item: "1.2"
+    tasks: ["T003"]
+    files:
+      - "backend/src/config/env.js"
+      - "backend/src/db/pool.js"
+      - "backend/src/db/migrate-runner.js"
+      - "backend/src/db/migrate.js"
+      - "backend/migrations/001_initial_schema.sql"
     status: "complete"
 
 validation:

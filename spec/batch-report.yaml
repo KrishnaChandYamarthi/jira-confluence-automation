@@ -1,63 +1,93 @@
-batch_id: "B02"
-completed_tasks: ["T002"]
+batch_id: "B03"
+completed_tasks: ["T003"]
 blocked_tasks: []
 files_changed:
-  T002:
-    - file: "compose.yaml"
+  T003:
+    - file: "backend/package.json"
+      change_type: "modified"
+      description: "Add pg, migrate, and extended syntax-check scripts."
+    - file: "backend/package-lock.json"
+      change_type: "modified"
+      description: "Lock pg 8.23.1 and transitive dependencies."
+    - file: "backend/src/config/env.js"
+      change_type: "modified"
+      description: "Load local root/backend configuration and provide safe PostgreSQL URL validation."
+    - file: "backend/src/db/pool.js"
       change_type: "created"
-      description: "Add local PostgreSQL 15.14 with environment-injected credentials, loopback-only port, health check, and named volume."
-    - file: ".env.example"
+      description: "Provide a configured PostgreSQL pool."
+    - file: "backend/src/db/migrate-runner.js"
       change_type: "created"
-      description: "Add placeholder-only local database configuration."
+      description: "Apply numbered SQL migrations once, in order, with checksums, advisory locking, and transactional failure behavior."
+    - file: "backend/src/db/migrate.js"
+      change_type: "created"
+      description: "Add the migration CLI with explicit failure exit codes."
+    - file: "backend/migrations/001_initial_schema.sql"
+      change_type: "created"
+      description: "Add initial users, encrypted provider-connection, operations, and audit schema."
+    - file: "backend/tests/config/env.test.js"
+      change_type: "modified"
+      description: "Test database URL handling and safe validation errors."
+    - file: "backend/tests/integration/migrations.test.js"
+      change_type: "created"
+      description: "Add isolated PostgreSQL migration/schema integration tests."
     - file: "backend/README.md"
       change_type: "modified"
-      description: "Document database startup and host connection settings."
+      description: "Document migration command and database-backed testing."
+    - file: "spec/specification.md"
+      change_type: "modified"
+      description: "Specify per-user request-ID scope and rejection of conflicting reuse."
     - file: "spec/tasks.md"
       change_type: "modified"
-      description: "Mark T002 complete after runtime verification."
+      description: "Clarify T003 idempotency criteria and mark T003 complete."
     - file: "spec/checkpoints/tasks-to-impl.yaml"
       change_type: "modified"
-      description: "Record T002 implementation, verification, and traceability."
+      description: "Record T003 completion and requirement traceability."
 upstream_artifacts_consumed:
-  T002:
-    - artifact: "spec/tasks.md#T002"
-      used_for: "Service, health check, injected credentials, persistent volume, documentation, and ignore behavior acceptance criteria."
-    - artifact: "spec/specification.md#REQ-026"
-      used_for: "PostgreSQL 15 and reviewable persistence setup."
-    - artifact: "spec/constitution.md"
-      used_for: "Reproducible Docker database configuration and externalized secrets."
+  T003:
+    - artifact: "spec/tasks.md#T003"
+      used_for: "Migration/schema scope and acceptance criteria."
+    - artifact: "spec/specification.md#REQ-015-017"
+      used_for: "Request records, unique request identifiers, operation lifecycle, and requester history ownership."
+    - artifact: "spec/specification.md#REQ-022"
+      used_for: "Expiry metadata for operations and audit records."
+    - artifact: "spec/specification.md#REQ-026-027"
+      used_for: "PostgreSQL persistence and transactional local data integrity."
+    - artifact: "spec/specification.md#REQ-035"
+      used_for: "Encrypted token material fields only."
+    - artifact: "User decision in chat"
+      used_for: "Request identifiers are unique per user across operation types; conflicting action/payload reuse is rejected."
 evidence_mapping:
-  T002:
-    - upstream: "spec/tasks.md#T002 acceptance criteria 1"
-      output: "compose.yaml"
-      evidence: "docker compose up -d --wait reported the db service healthy; pg_isready accepted connections."
-    - upstream: "spec/tasks.md#T002 acceptance criteria 2"
-      output: "compose.yaml, .env.example"
-      evidence: "Compose consumes POSTGRES_* variables; checked-in example contains only local placeholders."
-    - upstream: "spec/tasks.md#T002 acceptance criteria 3"
-      output: "compose.yaml, backend/README.md"
-      evidence: "Named postgres_data volume is configured; SQL query returned database jira_automation on PostgreSQL 15.14."
-    - upstream: "spec/tasks.md#T002 acceptance criteria 4"
-      output: ".env.example, .gitignore"
-      evidence: "git check-ignore confirmed .env is ignored and .env.example is not ignored."
+  T003:
+    - upstream: "spec/tasks.md#T003 acceptance criteria 1"
+      output: "backend/src/db/migrate-runner.js, backend/migrations/001_initial_schema.sql"
+      evidence: "Integration test applied version 001 in a fresh isolated PostgreSQL schema and confirmed schema_migrations plus four domain tables."
+    - upstream: "spec/tasks.md#T003 acceptance criteria 2"
+      output: "backend/migrations/001_initial_schema.sql"
+      evidence: "PostgreSQL tests verified per-user request-ID uniqueness across operation types, owner foreign key, allowed lifecycle states, provider/type consistency, and expiry fields."
+    - upstream: "spec/tasks.md#T003 acceptance criteria 3"
+      output: "backend/migrations/001_initial_schema.sql"
+      evidence: "Connection schema uses ciphertext/nonce/auth-tag/key-version columns; tests confirm no plaintext token columns; no real token fixture is present."
+    - upstream: "spec/tasks.md#T003 acceptance criteria 4"
+      output: "backend/src/db/migrate-runner.js, backend/src/db/migrate.js"
+      evidence: "Repeated command applied zero migrations; checksum drift and SQL failure are rejected; failed DB connection exits with status 1 without exposing credentials."
 traceability:
-  - requirement: "REQ-026"
+  - requirement: "REQ-015, REQ-016, REQ-017, REQ-022, REQ-026, REQ-027, REQ-035"
     plan_item: "1.2"
-    task: "T002"
-    files: ["compose.yaml", ".env.example", "backend/README.md"]
-    status: "completed"
-  - requirement: "REQ-034"
-    plan_item: "1.2"
-    task: "T002"
-    files: ["compose.yaml"]
+    task: "T003"
+    files:
+      - "backend/src/config/env.js"
+      - "backend/src/db/pool.js"
+      - "backend/src/db/migrate-runner.js"
+      - "backend/src/db/migrate.js"
+      - "backend/migrations/001_initial_schema.sql"
     status: "completed"
 protocol_violation: false
 errors: []
 warnings: []
 test_results:
-  T002:
-    command: "docker compose --env-file .env.example config; docker compose up -d --wait; docker compose exec db pg_isready; docker compose exec db psql -Atc \"SELECT current_database(), current_setting('server_version_num');\""
-    passed: 2
+  T003:
+    command: "npm ci --ignore-scripts; npm run build; npm test; npm run migrate twice; simulated unavailable DB"
+    passed: 13
     failed: 0
     skipped: 0
     failures: []
