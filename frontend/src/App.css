@@ -35,6 +35,31 @@
   background: rgb(255 255 255 / 92%);
 }
 
+.primary-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.25rem;
+}
+
+.nav-link {
+  padding: 0.5rem 0.65rem;
+  border-radius: 0.5rem;
+  color: #465d76;
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.nav-link:hover,
+.nav-link.is-active {
+  background: #edf4fa;
+  color: #123f72;
+}
+
+.nav-link.is-active {
+  font-weight: 700;
+}
+
 .brand {
   display: inline-flex;
   align-items: center;
@@ -75,6 +100,37 @@
   border-radius: 1.5rem;
   background: #fff;
   box-shadow: 0 1.5rem 4rem rgb(31 57 83 / 8%);
+}
+
+.route-panel {
+  width: min(100%, 48rem);
+  padding: clamp(2rem, 7vw, 4.5rem);
+  border: 1px solid #e1e9f2;
+  border-radius: 1.5rem;
+  background: #fff;
+  box-shadow: 0 1.5rem 4rem rgb(31 57 83 / 8%);
+}
+
+.route-panel h1 {
+  margin: 0;
+  color: #18304d;
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.route-description {
+  margin: 1.25rem 0 0;
+  color: #53657a;
+  font-size: 1.125rem;
+  line-height: 1.7;
+}
+
+.home-link {
+  display: inline-block;
+  margin-top: 1.5rem;
+  color: #123f72;
+  font-weight: 700;
 }
 
 .eyebrow {
@@ -183,8 +239,9 @@
     padding-block: 1rem;
   }
 
-  .environment-label {
-    padding-left: 2.75rem;
+  .primary-nav {
+    justify-content: flex-start;
+    margin-left: -0.65rem;
   }
 
   .main-content {

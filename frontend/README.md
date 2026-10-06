@@ -18,4 +18,9 @@ repository's `.nvmrc`.
 3. Start Vite with `npm run dev`, create a production bundle with `npm run build`,
    or serve the built bundle locally with `npm run preview`.
 
-Run `npm test` for the frontend component and error-boundary tests.
+The app currently provides route shells for `/login`, `/connections`,
+`/jira/issues`, `/confluence/pages`, and `/operations`, along with a not-found
+page. These are navigation placeholders; authentication and provider workflows
+are implemented in later tasks.
+
+Run `npm test` for the frontend shell, route, and error-boundary tests.

@@ -163,7 +163,7 @@ observable and redacted.
 
 ### T008 — Frontend routes
 
-- [ ] T008 [Plan:2.2] Implement client-side routes for login, connections, Jira, Confluence, and operation history.
+- [x] T008 [Plan:2.2] Implement client-side routes for login, connections, Jira, Confluence, and operation history.
 - **Requirements**: REQ-002, REQ-021, REQ-023
 - **Files**: `frontend/src/app/router.jsx`, `frontend/src/features/auth/`,
   `frontend/src/features/connections/`, `frontend/src/features/jira/`,
