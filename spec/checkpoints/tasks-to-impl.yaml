@@ -1,0 +1,159 @@
+metadata:
+  generated: "2026-10-06"
+  source_tasks: "spec/tasks.md"
+  last_updated: "2026-10-06"
+
+summary:
+  total_tasks: 40
+  completed_tasks: 1
+  in_progress_tasks: 0
+  pending_tasks: 39
+  completion_percentage: 2.5
+
+tasks:
+  - task_id: "T001"
+    description: "Create backend package/runtime configuration and Express entry points"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: ".nvmrc"
+          changes:
+            - line_start: 1
+              line_end: 1
+              change_type: "added"
+              description: "Pin the project runtime to Node.js 24.21.0"
+        - file: ".gitignore"
+          changes:
+            - line_start: 1
+              line_end: 10
+              change_type: "added"
+              description: "Exclude dependencies, build output, logs, and local environment files"
+        - file: "backend/package.json"
+          changes:
+            - line_start: 1
+              line_end: 19
+              change_type: "added"
+              description: "Pin Express 5 and dotenv and define start, dev, build, and test scripts"
+        - file: "backend/package-lock.json"
+          changes:
+            - line_start: 1
+              line_end: 908
+              change_type: "added"
+              description: "Lock the resolved backend dependency graph"
+        - file: "backend/src/config/env.js"
+          changes:
+            - line_start: 1
+              line_end: 39
+              change_type: "added"
+              description: "Load optional local environment config and validate PORT/NODE_ENV"
+        - file: "backend/src/app.js"
+          changes:
+            - line_start: 1
+              line_end: 12
+              change_type: "added"
+              description: "Export Express app without binding a listening socket; add minimal health response"
+        - file: "backend/src/server.js"
+          changes:
+            - line_start: 1
+              line_end: 22
+              change_type: "added"
+              description: "Validate startup configuration and listen on configured port"
+        - file: "backend/tests/config/env.test.js"
+          changes:
+            - line_start: 1
+              line_end: 24
+              change_type: "added"
+              description: "Test required/malformed port and runtime mode validation"
+        - file: "backend/tests/app.test.js"
+          changes:
+            - line_start: 1
+              line_end: 20
+              change_type: "added"
+              description: "Test app import and health response over HTTP"
+        - file: "backend/README.md"
+          changes:
+            - line_start: 1
+              line_end: 29
+              change_type: "added"
+              description: "Document credential-free local setup and health check"
+    verification:
+      build_passed: true
+      test_results:
+        command: "npm test"
+        passed: 3
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "npm ci succeeded; npm run build passed; live GET /health returned HTTP 200; startup without PORT exited with a clear configuration error."
+    upstream_trace:
+      plan_item: "1.1"
+      requirements: ["REQ-025", "REQ-034"]
+      full_trace: "REQ-025/REQ-034 -> Phase-1 Step-1.1 -> T001 -> backend package, runtime, config, app, server, and README"
+
+pending_tasks:
+  - "T002"
+  - "T003"
+  - "T004"
+  - "T005"
+  - "T006"
+  - "T007"
+  - "T008"
+  - "T009"
+  - "T010"
+  - "T011"
+  - "T012"
+  - "T013"
+  - "T014"
+  - "T015"
+  - "T016"
+  - "T017"
+  - "T018"
+  - "T019"
+  - "T020"
+  - "T021"
+  - "T022"
+  - "T023"
+  - "T024"
+  - "T025"
+  - "T026"
+  - "T027"
+  - "T028"
+  - "T029"
+  - "T030"
+  - "T031"
+  - "T032"
+  - "T033"
+  - "T034"
+  - "T035"
+  - "T036"
+  - "T037"
+  - "T038"
+  - "T039"
+  - "T040"
+
+untracked_changes: []
+
+traceability_chain:
+  - chain_id: "TRACE-025-034"
+    requirement: "REQ-025, REQ-034"
+    plan_phase: "Phase-1"
+    plan_item: "1.1"
+    tasks: ["T001"]
+    files:
+      - ".gitignore"
+      - "backend/package.json"
+      - "backend/package-lock.json"
+      - ".nvmrc"
+      - "backend/src/config/env.js"
+      - "backend/src/app.js"
+      - "backend/src/server.js"
+      - "backend/README.md"
+      - "backend/tests/config/env.test.js"
+      - "backend/tests/app.test.js"
+    status: "complete"
+
+validation:
+  passed: true
+  errors: []
+  warnings: []
+  blocking_issues: []

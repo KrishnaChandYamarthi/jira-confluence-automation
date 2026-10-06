@@ -1,0 +1,19 @@
+{
+  "name": "jira-automation-backend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": "24.x"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "build": "node --check src/server.js && node --check src/app.js && node --check src/config/env.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "dotenv": "18.0.5",
+    "express": "5.2.1"
+  }
+}

@@ -1,0 +1,93 @@
+batch_id: "B01"
+completed_tasks: ["T001"]
+blocked_tasks: []
+files_changed:
+  T001:
+    - file: ".gitignore"
+      change_type: "created"
+      description: "Ignore local secrets, dependencies, and generated output."
+    - file: ".nvmrc"
+      change_type: "created"
+      description: "Pin Node.js 24.21.0."
+    - file: "backend/package.json"
+      change_type: "created"
+      description: "Define pinned Express 5 dependencies and start/dev/build/test scripts."
+    - file: "backend/package-lock.json"
+      change_type: "created"
+      description: "Lock the dependency graph for clean npm ci installs."
+    - file: "backend/src/config/env.js"
+      change_type: "created"
+      description: "Load optional local configuration and validate PORT and NODE_ENV."
+    - file: "backend/src/app.js"
+      change_type: "created"
+      description: "Export the socket-free Express app and a minimal health endpoint."
+    - file: "backend/src/server.js"
+      change_type: "created"
+      description: "Validate configuration and start the server on the configured port."
+    - file: "backend/tests/config/env.test.js"
+      change_type: "created"
+      description: "Test missing, malformed, and valid runtime configuration."
+    - file: "backend/tests/app.test.js"
+      change_type: "created"
+      description: "Test the health response over HTTP."
+    - file: "backend/README.md"
+      change_type: "created"
+      description: "Document credential-free local backend setup."
+    - file: "spec/tasks.md"
+      change_type: "modified"
+      description: "Mark T001 complete after verification."
+    - file: "spec/checkpoints/tasks-to-impl.yaml"
+      change_type: "created"
+      description: "Record implementation and requirement traceability."
+upstream_artifacts_consumed:
+  T001:
+    - artifact: "spec/tasks.md#T001"
+      used_for: "Files, acceptance criteria, dependencies, and REQ mapping."
+    - artifact: "spec/plan.md#Step-1.1"
+      used_for: "Node.js 24 LTS and Express 5 runtime decisions."
+    - artifact: "spec/specification.md#REQ-025"
+      used_for: "Externalized configuration and secret-free setup documentation."
+    - artifact: "spec/specification.md#REQ-034"
+      used_for: "Required backend technology stack."
+    - artifact: "spec/constitution.md"
+      used_for: "Server-side boundaries and externalized runtime configuration."
+evidence_mapping:
+  T001:
+    - upstream: "spec/tasks.md#T001 acceptance criteria 1"
+      output: "backend/package-lock.json"
+      evidence: "npm ci completed successfully under Node.js v24.21.0."
+    - upstream: "spec/tasks.md#T001 acceptance criteria 2"
+      output: "backend/src/app.js, backend/src/server.js"
+      evidence: "App test imports app; live server GET /health returned HTTP 200."
+    - upstream: "spec/tasks.md#T001 acceptance criteria 3"
+      output: "backend/src/config/env.js"
+      evidence: "Tests reject missing/invalid PORT and invalid NODE_ENV; direct startup without PORT exited nonzero with a redacted actionable message."
+    - upstream: "spec/tasks.md#T001 acceptance criteria 4"
+      output: ".gitignore, backend/README.md"
+      evidence: "Local .env files are ignored; README setup requires only a non-secret PORT."
+traceability:
+  - requirement: "REQ-025"
+    plan_item: "1.1"
+    task: "T001"
+    files: ["backend/src/config/env.js", "backend/README.md", ".gitignore"]
+    status: "completed"
+  - requirement: "REQ-034"
+    plan_item: "1.1"
+    task: "T001"
+    files: ["backend/package.json", "backend/package-lock.json", ".nvmrc"]
+    status: "completed"
+protocol_violation: false
+errors: []
+warnings: []
+test_results:
+  T001:
+    command: "npm ci; npm run build; npm test; live GET /health probe"
+    passed: 3
+    failed: 0
+    skipped: 0
+    failures: []
+endpoint_probes:
+  - method: "GET"
+    path: "/health"
+    status: 200
+    result: "PASS"

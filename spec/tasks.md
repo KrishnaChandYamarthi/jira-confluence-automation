@@ -36,7 +36,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T001 — Backend runtime and configuration
 
-- [ ] T001 [Plan:1.1] Create the Express 5 backend package, pinned Node.js 24 LTS runtime configuration, entry points, and environment validation.
+- [x] T001 [Plan:1.1] Create the Express 5 backend package, pinned Node.js 24 LTS runtime configuration, entry points, and environment validation.
 - **Requirements**: REQ-025, REQ-034
 - **Files**: `backend/package.json`, `backend/package-lock.json` (or chosen package
   manager lockfile), `.nvmrc`, `backend/src/server.js`, `backend/src/app.js`,
