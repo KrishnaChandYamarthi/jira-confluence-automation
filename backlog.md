@@ -1,60 +1,4 @@
-# Implementation Backlog — A1 Bench Engagement Pilot
 
-Derived from `project_spec.md`. This backlog resolves several of the
-open items from Section 8 of the spec via clarification with the
-project owner (see **Decisions Applied** below); remaining open items
-are flagged inline as `(OPEN ITEM)`.
-
-## Decisions Applied (from clarification)
-
-- **Rollout strategy:** Build one track end-to-end first (MVP), then
-  expand to the remaining 5. **MVP track: Java.**
-- **Code execution engine:** Not yet chosen — backlog includes an
-evaluation/spike task; integration tasks are written generically to
-support either **Judge0 or Piston**.
-- **GenAI track:** Standalone 6th track with its own coding task set
-(not an overlay on the other 5).
-- **Database:** SQLite for the pilot.
-- **Task authoring:** SMEs/track leads provide structured **JSON/YAML**
-task files to engineering (no authoring UI in this phase).
-- **Failure handling:** Manual review/escalation by the manager (no
-automated retake logic in this phase).
-
----
-
-## Phase 1: Setup
-
-- [ ] Initialize the project repository (structure, `.gitignore`, README) — #2
-- [ ] Set up Python virtual environment and `requirements.txt` (Flask/FastAPI, SQLite driver, testing libraries) — #3
-- [ ] Choose backend framework: Flask vs. FastAPI, and scaffold the base app — #5
-- [ ] Design initial SQLite schema: `bench_resources`, `tracks`, `submissions`, `scores`, `readiness_flags` — #1
-- [ ] Define the JSON/YAML schema for coding task files (task description, test cases, expected outputs, language, pass threshold) — #4
-- [ ] Spike: evaluate Judge0 vs. Piston for language support (Java first, then JS/.NET/Python), hosting footprint, and API ergonomics; document a recommendation — #7
-- [ ] Define the CSV import format expected from Radar.epam.com exports (employee ID, name, track, bench start date) — `(OPEN ITEM: confirm exact Radar CSV column names/format with a sample export)` — #6
-- [ ] Set up local dev environment instructions (`SETUP.md` or equivalent) for new contributors — #8
-- [ ] Set up basic project CI (lint + test run on push), if applicable — #9
-
-## Phase 2: Core Features
-
-### MVP — Java track end-to-end
-- [ ] Build CSV roster importer (parses Radar export, loads into `bench_resources` table, flags unsupported tracks as "not yet assessable")
-- [ ] Build Java coding task loader (reads JSON/YAML task files for the Java track)
-- [ ] Implement assessment trigger logic (fires once when a Java-track resource is newly marked "on bench")
-- [ ] Implement submission handling (accept code submission tied to a bench resource + task)
-- [ ] Implement score calculation from graded test-case results
-- [ ] Implement configurable per-track pass/fail threshold and readiness flag logic (Ready / Not Ready) for Java
-- [ ] Implement manual-review flag/status for failed assessments (surfaces to manager for follow-up)
-
-### Expansion — remaining 5 tracks
-- [ ] Add task loader + task files for JavaScript track
-- [ ] Add task loader + task files for Data Software Engineering track
-- [ ] Add task loader + task files for Automation Testing track (with Java/.NET/JS/Python sub-track variants)
-- [ ] Add task loader + task files for Python track
-- [ ] Add task loader + task files for standalone GenAI knowledge track
-- [ ] Generalize assessment trigger, submission handling, and readiness-flag logic to work across all 6 tracks (remove Java-only assumptions)
-- [ ] Confirm/set per-track pass/fail thresholds with each track lead `(OPEN ITEM: exact thresholds per track)`
-
-## Phase 3: Integration
 
 - [ ] Integrate selected code execution engine (Judge0 or Piston) for sandboxed grading of Java submissions (MVP)
 - [ ] Extend code execution engine integration to remaining languages (JavaScript, .NET, Python) as each track is added
@@ -65,7 +9,9 @@ automated retake logic in this phase).
 - [ ] Wire the primary KPI (% assessed within 10 days) into the dashboard view `(OPEN ITEM: confirm exact target % — spec currently says "90%+" as a placeholder)`
 - [ ] Wire manual-review/failure flags into a manager-visible view for follow-up action
 
+
 ## Phase 4: Testing
+
 
 - [ ] Unit tests for CSV import parsing (including malformed/missing fields)
 - [ ] Unit tests for score calculation and readiness-flag logic per track threshold
@@ -76,7 +22,9 @@ automated retake logic in this phase).
 - [ ] Security/sandbox isolation test: confirm submitted code cannot access the host system or other submissions
 - [ ] Load/volume test with a representative dataset (~400 bench resources) to confirm the dashboard and grading pipeline perform acceptably
 
+
 ## Phase 5: Documentation
+
 
 - [ ] Write project `README.md` (purpose, architecture overview, how to run locally)
 - [ ] Write the task-authoring guide for SMEs/track leads (JSON/YAML schema, examples, how to submit new tasks)
@@ -84,3 +32,20 @@ automated retake logic in this phase).
 - [ ] Write the CSV roster import guide (expected format, how to export from Radar, troubleshooting common import errors)
 - [ ] Document the code execution engine integration (chosen engine, configuration, how to add support for a new language)
 - [ ] Update `project_spec.md` Section 8 (Open Items) to reflect decisions made in this backlog, keeping the still-unresolved items clearly marked
+
+## Module 19: GitHub coding agent delegation candidates
+
+These are proposals for delegating implementation work through the GitHub coding agent; they do not automatically assign issues. The agent should work in a pull request, with a human reviewing the result before merge.
+
+### Good candidates once the issue scope is confirmed
+- **#1 — SQLite schema:** Delegate schema implementation and tests after the data model and any unresolved schema choices are explicit in the issue.
+- **#3 — Python environment and dependencies:** Delegate reproducible environment/dependency setup and verification, keeping versions and setup aligned with the project requirements.
+- **#8 — Setup instructions:** Delegate a documentation update after the setup path is validated; instructions should match the actual project commands.
+- **#9 — CI:** Delegate the workflow implementation and checks after the supported Python version and required CI jobs are confirmed.
+
+### Conditional or not ready to delegate
+- **#5 — Framework/scaffold:** Suitable after a human confirms the framework choice (Flask or FastAPI); do not ask the agent to make that product decision implicitly.
+- **#6 — Radar CSV format:** Wait for a representative Radar export and confirmation of the required columns; otherwise the agent would have to invent the input contract.
+- **#7 — Judge0 vs. Piston:** The agent can gather evidence and compare options, but a human should select the execution engine before implementation is delegated.
+- **#2 — Repository structure:** Review the open issue for remaining gaps first; the repository, README, and `.gitignore` are already present, so avoid duplicating completed setup work.
+- **#4 — Task-file schema:** Exclude from delegation for now because the corresponding GitHub issue is closed.
