@@ -1,93 +1,64 @@
-batch_id: "B01"
-completed_tasks: ["T001"]
+batch_id: "B02"
+completed_tasks: ["T002"]
 blocked_tasks: []
 files_changed:
-  T001:
-    - file: ".gitignore"
+  T002:
+    - file: "compose.yaml"
       change_type: "created"
-      description: "Ignore local secrets, dependencies, and generated output."
-    - file: ".nvmrc"
+      description: "Add local PostgreSQL 15.14 with environment-injected credentials, loopback-only port, health check, and named volume."
+    - file: ".env.example"
       change_type: "created"
-      description: "Pin Node.js 24.21.0."
-    - file: "backend/package.json"
-      change_type: "created"
-      description: "Define pinned Express 5 dependencies and start/dev/build/test scripts."
-    - file: "backend/package-lock.json"
-      change_type: "created"
-      description: "Lock the dependency graph for clean npm ci installs."
-    - file: "backend/src/config/env.js"
-      change_type: "created"
-      description: "Load optional local configuration and validate PORT and NODE_ENV."
-    - file: "backend/src/app.js"
-      change_type: "created"
-      description: "Export the socket-free Express app and a minimal health endpoint."
-    - file: "backend/src/server.js"
-      change_type: "created"
-      description: "Validate configuration and start the server on the configured port."
-    - file: "backend/tests/config/env.test.js"
-      change_type: "created"
-      description: "Test missing, malformed, and valid runtime configuration."
-    - file: "backend/tests/app.test.js"
-      change_type: "created"
-      description: "Test the health response over HTTP."
+      description: "Add placeholder-only local database configuration."
     - file: "backend/README.md"
-      change_type: "created"
-      description: "Document credential-free local backend setup."
+      change_type: "modified"
+      description: "Document database startup and host connection settings."
     - file: "spec/tasks.md"
       change_type: "modified"
-      description: "Mark T001 complete after verification."
+      description: "Mark T002 complete after runtime verification."
     - file: "spec/checkpoints/tasks-to-impl.yaml"
-      change_type: "created"
-      description: "Record implementation and requirement traceability."
+      change_type: "modified"
+      description: "Record T002 implementation, verification, and traceability."
 upstream_artifacts_consumed:
-  T001:
-    - artifact: "spec/tasks.md#T001"
-      used_for: "Files, acceptance criteria, dependencies, and REQ mapping."
-    - artifact: "spec/plan.md#Step-1.1"
-      used_for: "Node.js 24 LTS and Express 5 runtime decisions."
-    - artifact: "spec/specification.md#REQ-025"
-      used_for: "Externalized configuration and secret-free setup documentation."
-    - artifact: "spec/specification.md#REQ-034"
-      used_for: "Required backend technology stack."
+  T002:
+    - artifact: "spec/tasks.md#T002"
+      used_for: "Service, health check, injected credentials, persistent volume, documentation, and ignore behavior acceptance criteria."
+    - artifact: "spec/specification.md#REQ-026"
+      used_for: "PostgreSQL 15 and reviewable persistence setup."
     - artifact: "spec/constitution.md"
-      used_for: "Server-side boundaries and externalized runtime configuration."
+      used_for: "Reproducible Docker database configuration and externalized secrets."
 evidence_mapping:
-  T001:
-    - upstream: "spec/tasks.md#T001 acceptance criteria 1"
-      output: "backend/package-lock.json"
-      evidence: "npm ci completed successfully under Node.js v24.21.0."
-    - upstream: "spec/tasks.md#T001 acceptance criteria 2"
-      output: "backend/src/app.js, backend/src/server.js"
-      evidence: "App test imports app; live server GET /health returned HTTP 200."
-    - upstream: "spec/tasks.md#T001 acceptance criteria 3"
-      output: "backend/src/config/env.js"
-      evidence: "Tests reject missing/invalid PORT and invalid NODE_ENV; direct startup without PORT exited nonzero with a redacted actionable message."
-    - upstream: "spec/tasks.md#T001 acceptance criteria 4"
-      output: ".gitignore, backend/README.md"
-      evidence: "Local .env files are ignored; README setup requires only a non-secret PORT."
+  T002:
+    - upstream: "spec/tasks.md#T002 acceptance criteria 1"
+      output: "compose.yaml"
+      evidence: "docker compose up -d --wait reported the db service healthy; pg_isready accepted connections."
+    - upstream: "spec/tasks.md#T002 acceptance criteria 2"
+      output: "compose.yaml, .env.example"
+      evidence: "Compose consumes POSTGRES_* variables; checked-in example contains only local placeholders."
+    - upstream: "spec/tasks.md#T002 acceptance criteria 3"
+      output: "compose.yaml, backend/README.md"
+      evidence: "Named postgres_data volume is configured; SQL query returned database jira_automation on PostgreSQL 15.14."
+    - upstream: "spec/tasks.md#T002 acceptance criteria 4"
+      output: ".env.example, .gitignore"
+      evidence: "git check-ignore confirmed .env is ignored and .env.example is not ignored."
 traceability:
-  - requirement: "REQ-025"
-    plan_item: "1.1"
-    task: "T001"
-    files: ["backend/src/config/env.js", "backend/README.md", ".gitignore"]
+  - requirement: "REQ-026"
+    plan_item: "1.2"
+    task: "T002"
+    files: ["compose.yaml", ".env.example", "backend/README.md"]
     status: "completed"
   - requirement: "REQ-034"
-    plan_item: "1.1"
-    task: "T001"
-    files: ["backend/package.json", "backend/package-lock.json", ".nvmrc"]
+    plan_item: "1.2"
+    task: "T002"
+    files: ["compose.yaml"]
     status: "completed"
 protocol_violation: false
 errors: []
 warnings: []
 test_results:
-  T001:
-    command: "npm ci; npm run build; npm test; live GET /health probe"
-    passed: 3
+  T002:
+    command: "docker compose --env-file .env.example config; docker compose up -d --wait; docker compose exec db pg_isready; docker compose exec db psql -Atc \"SELECT current_database(), current_setting('server_version_num');\""
+    passed: 2
     failed: 0
     skipped: 0
     failures: []
-endpoint_probes:
-  - method: "GET"
-    path: "/health"
-    status: 200
-    result: "PASS"
+endpoint_probes: []

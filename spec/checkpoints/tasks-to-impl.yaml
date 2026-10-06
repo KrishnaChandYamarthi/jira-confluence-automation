@@ -5,10 +5,10 @@ metadata:
 
 summary:
   total_tasks: 40
-  completed_tasks: 1
+  completed_tasks: 2
   in_progress_tasks: 0
-  pending_tasks: 39
-  completion_percentage: 2.5
+  pending_tasks: 38
+  completion_percentage: 5.0
 
 tasks:
   - task_id: "T001"
@@ -90,8 +90,50 @@ tasks:
       requirements: ["REQ-025", "REQ-034"]
       full_trace: "REQ-025/REQ-034 -> Phase-1 Step-1.1 -> T001 -> backend package, runtime, config, app, server, and README"
 
+  - task_id: "T002"
+    description: "Add Docker Compose PostgreSQL 15 service"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "compose.yaml"
+          changes:
+            - line_start: 1
+              line_end: 21
+              change_type: "added"
+              description: "Add local PostgreSQL 15.14, required environment interpolation, loopback-only port, named data volume, and pg_isready health check"
+        - file: ".env.example"
+          changes:
+            - line_start: 1
+              line_end: 5
+              change_type: "added"
+              description: "Document local-only DB settings with placeholder credentials"
+        - file: "backend/README.md"
+          changes:
+            - line_start: 8
+              line_end: 41
+              change_type: "modified"
+              description: "Document Compose startup and host-side database connection settings"
+        - file: "spec/tasks.md"
+          changes:
+            - line_start: 56
+              line_end: 56
+              change_type: "modified"
+              description: "Mark T002 complete after database readiness and query verification"
+    verification:
+      build_passed: true
+      test_results:
+        command: "docker compose --env-file .env.example config; docker compose up -d --wait; docker compose exec db pg_isready; docker compose exec db psql ..."
+        passed: 2
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Compose config is valid; container is healthy; pg_isready accepts connections; SQL query returned database jira_automation and PostgreSQL server_version_num 150014. A randomly generated local password is stored only in ignored root .env."
+    upstream_trace:
+      plan_item: "1.2"
+      requirements: ["REQ-026", "REQ-034"]
+      full_trace: "REQ-026/REQ-034 -> Phase-1 Step-1.2 -> T002 -> compose.yaml and local DB setup documentation"
+
 pending_tasks:
-  - "T002"
   - "T003"
   - "T004"
   - "T005"
@@ -147,6 +189,17 @@ traceability_chain:
       - "backend/src/config/env.js"
       - "backend/src/app.js"
       - "backend/src/server.js"
+      - "backend/README.md"
+    status: "complete"
+  - chain_id: "TRACE-026-034"
+    requirement: "REQ-026, REQ-034"
+    plan_phase: "Phase-1"
+    plan_item: "1.2"
+    tasks: ["T002"]
+    files:
+      - "compose.yaml"
+      - ".env.example"
+      - ".gitignore"
       - "backend/README.md"
       - "backend/tests/config/env.test.js"
       - "backend/tests/app.test.js"

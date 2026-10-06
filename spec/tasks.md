@@ -53,7 +53,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T002 — PostgreSQL 15 Docker service
 
-- [ ] T002 [P] [Plan:1.2] Add the local PostgreSQL 15 service and health check in root `compose.yaml`.
+- [x] T002 [P] [Plan:1.2] Add the local PostgreSQL 15 service and health check in root `compose.yaml`.
 - **Requirements**: REQ-026, REQ-034
 - **Files**: `compose.yaml`, `.env.example`, `.gitignore`
 - **Dependencies**: None; may proceed in parallel with T001.
