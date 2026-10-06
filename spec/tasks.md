@@ -88,7 +88,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T004 — API skeleton, validation, errors, and health endpoint
 
-- [ ] T004 [Plan:1.3] Create Express routing, middleware, validation, error response, request-ID, and health endpoint foundations.
+- [x] T004 [Plan:1.3] Create Express routing, middleware, validation, error response, request-ID, and health endpoint foundations.
 - **Requirements**: REQ-014, REQ-025, REQ-028, REQ-032, REQ-033
 - **Files**: `backend/src/routes/`, `backend/src/middleware/`,
   `backend/src/validation/`, `backend/src/errors/`, `backend/src/app.js`,

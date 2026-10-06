@@ -5,10 +5,10 @@ metadata:
 
 summary:
   total_tasks: 40
-  completed_tasks: 3
+  completed_tasks: 4
   in_progress_tasks: 0
-  pending_tasks: 37
-  completion_percentage: 7.5
+  pending_tasks: 36
+  completion_percentage: 10.0
 
 tasks:
   - task_id: "T001"
@@ -224,8 +224,98 @@ tasks:
       requirements: ["REQ-015", "REQ-016", "REQ-017", "REQ-022", "REQ-026", "REQ-027", "REQ-035"]
       full_trace: "REQ-015/016/017/022/026/027/035 -> Phase-1 Step-1.2 -> T003 -> migration runner and PostgreSQL schema"
 
+  - task_id: "T004"
+    description: "Create the API skeleton, validation, request IDs, safe errors, and health endpoint"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "backend/src/app.js"
+          changes:
+            - line_start: 1
+              line_end: 20
+              change_type: "modified"
+              description: "Wire request-ID correlation, health, reserved API prefixes, not-found handling, and safe centralized errors"
+        - file: "backend/src/errors/api-error.js"
+          changes:
+            - line_start: 1
+              line_end: 9
+              change_type: "added"
+              description: "Define the stable application error type and public JSON shape"
+        - file: "backend/src/middleware/request-id.js"
+          changes:
+            - line_start: 1
+              line_end: 7
+              change_type: "added"
+              description: "Assign a server-generated request identifier and response header"
+        - file: "backend/src/middleware/validate-body.js"
+          changes:
+            - line_start: 1
+              line_end: 47
+              change_type: "added"
+              description: "Reject invalid request bodies with actionable field-level errors before route handlers run"
+        - file: "backend/src/middleware/error-handler.js"
+          changes:
+            - line_start: 1
+              line_end: 53
+              change_type: "added"
+              description: "Serialize safe client errors and log only correlation context for unexpected failures"
+        - file: "backend/src/routes/index.js"
+          changes:
+            - line_start: 1
+              line_end: 26
+              change_type: "added"
+              description: "Reserve auth, Jira, Confluence, connection, and operation API prefixes without provider calls"
+        - file: "backend/tests/app.test.js"
+          changes:
+            - line_start: 1
+              line_end: 80
+              change_type: "modified"
+              description: "Cover health, request-ID, reserved API errors, and malformed JSON"
+        - file: "backend/tests/middleware/validation.test.js"
+          changes:
+            - line_start: 1
+              line_end: 52
+              change_type: "added"
+              description: "Verify invalid fields are rejected before route handler execution"
+        - file: "backend/tests/http/error-handler.test.js"
+          changes:
+            - line_start: 1
+              line_end: 41
+              change_type: "added"
+              description: "Verify unexpected errors do not expose diagnostics and logs retain only request correlation"
+        - file: "backend/package.json"
+          changes:
+            - line_start: 10
+              line_end: 10
+              change_type: "modified"
+              description: "Extend build syntax checks to cover API error and middleware modules"
+        - file: "backend/README.md"
+          changes:
+            - line_start: 54
+              line_end: 61
+              change_type: "modified"
+              description: "Document the error envelope, request ID, and reserved API prefixes"
+        - file: "spec/tasks.md"
+          changes:
+            - line_start: 91
+              line_end: 91
+              change_type: "modified"
+              description: "Mark T004 complete after build, tests, and live endpoint probes"
+    verification:
+      build_passed: true
+      test_results:
+        command: "npm run build; npm test"
+        passed: 17
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "Live server probes confirmed GET /health returns 200, all five reserved prefixes return the structured 501 placeholder, and malformed JSON returns 400 with the response request ID. No provider call is wired."
+    upstream_trace:
+      plan_item: "1.3"
+      requirements: ["REQ-014", "REQ-025", "REQ-028", "REQ-032", "REQ-033"]
+      full_trace: "REQ-014/025/028/032/033 -> Phase-1 Step-1.3 -> T004 -> validation, correlated safe errors, and backend API skeleton"
+
 pending_tasks:
-  - "T004"
   - "T005"
   - "T006"
   - "T007"
@@ -305,6 +395,22 @@ traceability_chain:
       - "backend/src/db/migrate-runner.js"
       - "backend/src/db/migrate.js"
       - "backend/migrations/001_initial_schema.sql"
+    status: "complete"
+  - chain_id: "TRACE-014-025-028-032-033"
+    requirement: "REQ-014, REQ-025, REQ-028, REQ-032, REQ-033"
+    plan_phase: "Phase-1"
+    plan_item: "1.3"
+    tasks: ["T004"]
+    files:
+      - "backend/src/app.js"
+      - "backend/src/errors/api-error.js"
+      - "backend/src/middleware/request-id.js"
+      - "backend/src/middleware/validate-body.js"
+      - "backend/src/middleware/error-handler.js"
+      - "backend/src/routes/index.js"
+      - "backend/tests/app.test.js"
+      - "backend/tests/middleware/validation.test.js"
+      - "backend/tests/http/error-handler.test.js"
     status: "complete"
 
 validation:

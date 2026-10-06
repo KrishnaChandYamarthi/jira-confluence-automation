@@ -27,6 +27,15 @@ root pins the Node.js patch version used for development.
 SSO, or Atlassian credentials; the migration command uses the local database
 configuration described below.
 
+## API response conventions
+
+`GET /health` returns HTTP 200 and `{"status":"ok"}`. Every request receives a
+server-generated `X-Request-Id`. Errors use a JSON envelope such as
+`{"error":{"code":"validation_failed","message":"Request validation failed.","requestId":"<uuid>","details":[{"field":"summary","code":"required","message":"summary is required."}]}}`.
+Stack traces, credentials, and provider error content are not returned to clients.
+Authentication, Jira, Confluence, connection, and operation route prefixes are
+reserved and currently return HTTP 501; they do not perform provider calls.
+
 ## Local database connection
 
 The Compose service is published only on `127.0.0.1`. Backend processes running on
