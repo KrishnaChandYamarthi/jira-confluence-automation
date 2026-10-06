@@ -124,7 +124,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T006 — PostgreSQL migration and persistence integration tests
 
-- [ ] T006 [Plan:1.2,1.4] Test migrations and core persistence invariants against the Docker PostgreSQL 15 service.
+- [x] T006 [Plan:1.2,1.4] Test migrations and core persistence invariants against the Docker PostgreSQL 15 service.
 - **Requirements**: REQ-015, REQ-016, REQ-022, REQ-026, REQ-027, REQ-031
 - **Files**: `backend/tests/integration/`, `backend/src/db/`, `backend/migrations/`
 - **Dependencies**: T002, T003, T005.

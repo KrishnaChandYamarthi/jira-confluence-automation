@@ -1,96 +1,60 @@
-batch_id: "B05"
-completed_tasks: ["T005"]
+batch_id: "B06"
+completed_tasks: ["T006"]
 blocked_tasks: []
 files_changed:
-  T005:
-    - file: "backend/src/observability/logger.js"
-      change_type: "created"
-      description: "Emit structured JSON log events while redacting credential keys and omitting provider/request content."
-    - file: "backend/src/middleware/error-handler.js"
+  T006:
+    - file: "backend/tests/integration/migrations.test.js"
       change_type: "modified"
-      description: "Send unexpected request failures to the shared safe logger."
-    - file: "backend/src/server.js"
-      change_type: "modified"
-      description: "Emit structured startup and shutdown failure events."
-    - file: "backend/src/db/migrate.js"
-      change_type: "modified"
-      description: "Emit structured migration events without raw exception messages."
-    - file: "backend/package.json"
-      change_type: "modified"
-      description: "Add separate unit, HTTP, integration, and aggregate scripts and pinned Supertest."
-    - file: "backend/package-lock.json"
-      change_type: "modified"
-      description: "Lock Supertest 7.3.1 and its dependencies."
-    - file: "backend/tests/observability/logger.test.js"
-      change_type: "created"
-      description: "Test structured fields plus recursive credential and provider-content redaction."
-    - file: "backend/tests/app.test.js"
-      change_type: "modified"
-      description: "Run HTTP contract tests with Supertest."
-    - file: "backend/tests/http/error-handler.test.js"
-      change_type: "modified"
-      description: "Run safe-error behavior through Supertest without opening a production listener."
-    - file: "backend/tests/middleware/validation.test.js"
-      change_type: "modified"
-      description: "Run input-validation behavior through Supertest."
+      description: "Verify PostgreSQL 15, durable pending operation round trips, request-ID uniqueness, transactional rollback, and owned-schema cleanup."
     - file: "backend/README.md"
       change_type: "modified"
-      description: "Document the test scripts and structured logging/redaction policy."
+      description: "Document the mandatory PostgreSQL 15 integration-test dependency and isolated-schema cleanup."
     - file: "spec/tasks.md"
       change_type: "modified"
-      description: "Mark T005 complete."
+      description: "Mark T006 complete."
     - file: "spec/checkpoints/tasks-to-impl.yaml"
       change_type: "modified"
-      description: "Record T005 verification and requirement traceability."
+      description: "Record test outcomes and requirement traceability."
 upstream_artifacts_consumed:
-  T005:
-    - artifact: "spec/tasks.md#T005"
-      used_for: "Logger behavior, package scripts, and acceptance criteria."
-    - artifact: "spec/specification.md#REQ-003"
-      used_for: "Keep per-user Atlassian authorization material out of logs."
-    - artifact: "spec/specification.md#REQ-027, REQ-028, REQ-031, REQ-032"
-      used_for: "Preserve operation integrity, observable behavior, coverage, and safe diagnostic context."
-    - artifact: "spec/constitution.md#Principle-I"
-      used_for: "Never log secrets and minimize sensitive information capture."
-    - artifact: "spec/plan.md#Step-1.4"
-      used_for: "Use structured redacted logging and Node/Supertest test harness."
+  T006:
+    - artifact: "spec/tasks.md#T006"
+      used_for: "Persistence integration-test requirements and acceptance criteria."
+    - artifact: "spec/specification.md#REQ-015, REQ-016, REQ-022, REQ-026, REQ-027, REQ-031"
+      used_for: "Durable pending operations, idempotency, lifecycle, retention metadata, PostgreSQL transactions, and verification requirements."
+    - artifact: "spec/plan.md#Step-1.2, Step-1.4"
+      used_for: "PostgreSQL 15 migration and persistence integration tests."
 evidence_mapping:
-  T005:
-    - upstream: "spec/tasks.md#T005 acceptance criteria 1"
-      output: "backend/package.json"
-      evidence: "npm run test:unit, npm run test:http, and npm test all ran; Node test failures produce nonzero process exit."
-    - upstream: "spec/tasks.md#T005 acceptance criteria 2"
-      output: "backend/src/observability/logger.js"
-      evidence: "Unit test asserted timestamp, level, event, request ID, and operation ID, and verified access/refresh tokens, client secrets, authorization, and provider content do not appear."
-    - upstream: "spec/tasks.md#T005 acceptance criteria 3"
-      output: "backend/tests/observability/logger.test.js"
-      evidence: "Redaction test covers camelCase/snake_case secret keys nested under a provider error, plus omitted message, errors, and response payloads."
-    - upstream: "spec/tasks.md#T005 acceptance criteria 4"
-      output: "backend/tests/app.test.js, backend/tests/http/error-handler.test.js"
-      evidence: "Supertest invokes the imported Express app without requiring server.js, SSO, or Atlassian credentials."
+  T006:
+    - upstream: "spec/tasks.md#T006 acceptance criteria 1"
+      output: "backend/tests/integration/migrations.test.js"
+      evidence: "Against PostgreSQL 15, integration test applied migrations, inserted and read a pending operation and its durable state/expiry, and removed only the unique per-test schema."
+    - upstream: "spec/tasks.md#T006 acceptance criteria 2"
+      output: "backend/tests/integration/migrations.test.js"
+      evidence: "Duplicate request ID across operation types for the same user violated the unique constraint; a follow-up count remained one, while another user's identifier was allowed."
+    - upstream: "spec/tasks.md#T006 acceptance criteria 3"
+      output: "backend/tests/integration/migrations.test.js"
+      evidence: "A check-constraint failure during audit insertion forced rollback; subsequent queries confirmed neither operation nor audit row persisted."
+    - upstream: "spec/tasks.md#T006 acceptance criteria 4"
+      output: "backend/tests/integration/migrations.test.js"
+      evidence: "Targeted integration run against unavailable port 1 failed explicitly with ECONNREFUSED and exit code 1; there is no memory-database fallback."
 traceability:
-  - requirement: "REQ-003, REQ-027, REQ-028, REQ-031, REQ-032"
-    plan_item: "1.4"
-    task: "T005"
+  - requirement: "REQ-015, REQ-016, REQ-022, REQ-026, REQ-027, REQ-031"
+    plan_item: "1.2, 1.4"
+    task: "T006"
     files:
-      - "backend/src/observability/logger.js"
-      - "backend/src/middleware/error-handler.js"
-      - "backend/src/server.js"
-      - "backend/src/db/migrate.js"
-      - "backend/tests/observability/logger.test.js"
+      - "backend/tests/integration/migrations.test.js"
+      - "backend/README.md"
     status: "completed"
 protocol_violation: false
 errors: []
 warnings: []
 test_results:
-  T005:
-    command: "npm ci --ignore-scripts; npm run build; npm test"
-    passed: 19
+  T006:
+    command: "npm run build; npm test"
+    passed: 21
     failed: 0
     skipped: 0
     failures: []
-runtime_checks:
-  - check: "Backend startup with PORT and NODE_ENV but no SSO/Atlassian configuration"
-    result: "PASS - emitted valid JSON backend_started event"
-  - check: "GET /health"
-    result: "PASS - HTTP 200 with {\"status\":\"ok\"}"
+negative_checks:
+  - check: "PostgreSQL unavailable (POSTGRES_PORT=1)"
+    result: "PASS - integration test failed explicitly with ECONNREFUSED and nonzero exit"

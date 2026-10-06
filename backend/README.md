@@ -63,6 +63,11 @@ local Compose database and the private root `.env` settings. Tests import the
 Express app without starting the production listener or requiring live provider
 credentials.
 
+The integration suite requires a reachable PostgreSQL 15 service. It checks the
+server version, creates a uniquely named temporary schema per test, and drops
+only that schema during cleanup. An unavailable or incompatible database fails
+the suite; there is no in-memory fallback or skipped integration run.
+
 Backend logs are newline-delimited JSON with timestamps, event names, and
 request/operation context. Credential-like fields are redacted, while request,
 response, and provider-content fields are omitted; thrown error messages and

@@ -5,10 +5,10 @@ metadata:
 
 summary:
   total_tasks: 40
-  completed_tasks: 5
+  completed_tasks: 6
   in_progress_tasks: 0
-  pending_tasks: 35
-  completion_percentage: 12.5
+  pending_tasks: 34
+  completion_percentage: 15.0
 
 tasks:
   - task_id: "T001"
@@ -406,8 +406,56 @@ tasks:
       requirements: ["REQ-003", "REQ-027", "REQ-028", "REQ-031", "REQ-032"]
       full_trace: "REQ-003/027/028/031/032 -> Phase-1 Step-1.4 -> T005 -> credential-redacting observability and isolated backend test harness"
 
+  - task_id: "T006"
+    description: "Test migration and durable operation persistence invariants against PostgreSQL 15"
+    status: "completed"
+    implementation:
+      files_changed:
+        - file: "backend/tests/integration/migrations.test.js"
+          changes:
+            - line_start: 12
+              line_end: 41
+              change_type: "modified"
+              description: "Require PostgreSQL 15 and close failed setup connections safely while creating uniquely isolated test schemas"
+            - line_start: 45
+              line_end: 82
+              change_type: "added"
+              description: "Persist and read back a pending Jira operation and verify its owner, request fingerprint, state, and expiry"
+            - line_start: 149
+              line_end: 165
+              change_type: "modified"
+              description: "Assert conflicting reuse of a user's request ID fails and leaves only one operation row"
+            - line_start: 168
+              line_end: 208
+              change_type: "added"
+              description: "Cause a related audit insert to fail inside a transaction, roll back, and verify neither record remains"
+        - file: "backend/README.md"
+          changes:
+            - line_start: 64
+              line_end: 69
+              change_type: "modified"
+              description: "Document mandatory PostgreSQL 15, isolated-schema cleanup, and explicit failure when the database is unavailable"
+        - file: "spec/tasks.md"
+          changes:
+            - line_start: 127
+              line_end: 127
+              change_type: "modified"
+              description: "Mark T006 complete after PostgreSQL-backed persistence tests pass"
+    verification:
+      build_passed: true
+      test_results:
+        command: "npm run build; npm test; integration probe with POSTGRES_PORT=1"
+        passed: 21
+        failed: 0
+        skipped: 0
+        failures: []
+      notes: "On PostgreSQL 15, all 6 unit, 5 HTTP, and 10 integration tests passed. The integration suite explicitly rejected an unavailable database with ECONNREFUSED and exit code 1; no fallback or skip was used."
+    upstream_trace:
+      plan_item: "1.2, 1.4"
+      requirements: ["REQ-015", "REQ-016", "REQ-022", "REQ-026", "REQ-027", "REQ-031"]
+      full_trace: "REQ-015/016/022/026/027/031 -> Phase-1 Steps 1.2 and 1.4 -> T006 -> PostgreSQL 15 durability, idempotency, rollback, and migration integration tests"
+
 pending_tasks:
-  - "T006"
   - "T007"
   - "T008"
   - "T009"
@@ -518,6 +566,15 @@ traceability_chain:
       - "backend/tests/middleware/validation.test.js"
       - "backend/package.json"
       - "backend/package-lock.json"
+    status: "complete"
+  - chain_id: "TRACE-015-016-022-026-027-031"
+    requirement: "REQ-015, REQ-016, REQ-022, REQ-026, REQ-027, REQ-031"
+    plan_phase: "Phase-1"
+    plan_item: "1.2, 1.4"
+    tasks: ["T006"]
+    files:
+      - "backend/tests/integration/migrations.test.js"
+      - "backend/README.md"
     status: "complete"
 
 validation:
