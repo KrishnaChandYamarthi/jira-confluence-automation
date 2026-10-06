@@ -1,7 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import express from "express";
-import { once } from "node:events";
+import request from "supertest";
 import { errorHandler, notFoundHandler } from "../../src/middleware/error-handler.js";
 import { requestIdMiddleware } from "../../src/middleware/request-id.js";
 import { validateBody } from "../../src/middleware/validate-body.js";
@@ -22,31 +22,20 @@ test("invalid fields fail server-side before a route handler is invoked", async 
   app.use(notFoundHandler);
   app.use(errorHandler);
 
-  const server = app.listen(0, "127.0.0.1");
-  await once(server, "listening");
+  const response = await request(app).post("/test").send({});
 
-  try {
-    const address = server.address();
-    const response = await fetch(`http://127.0.0.1:${address.port}/test`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({}),
-    });
-    const body = await response.json();
-
-    assert.equal(response.status, 400);
-    assert.equal(body.error.code, "validation_failed");
-    assert.equal(body.error.requestId, response.headers.get("x-request-id"));
-    assert.deepEqual(body.error.details, [
-      {
-        field: "summary",
-        code: "required",
-        message: "summary is required.",
-      },
-    ]);
-    assert.equal(handlerCalls, 0);
-  } finally {
-    server.close();
-    await once(server, "close");
-  }
+  assert.equal(response.status, 400);
+  assert.equal(response.body.error.code, "validation_failed");
+  assert.equal(
+    response.body.error.requestId,
+    response.headers["x-request-id"],
+  );
+  assert.deepEqual(response.body.error.details, [
+    {
+      field: "summary",
+      code: "required",
+      message: "summary is required.",
+    },
+  ]);
+  assert.equal(handlerCalls, 0);
 });

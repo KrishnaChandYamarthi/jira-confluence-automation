@@ -1,15 +1,19 @@
 import app from "./app.js";
 import { getEnv } from "./config/env.js";
+import { logger } from "./observability/logger.js";
 
 const env = getEnv();
 const server = app.listen(env.port, () => {
-  console.info(`Backend listening on port ${env.port} (${env.nodeEnv}).`);
+  logger.info("backend_started", {
+    port: env.port,
+    environment: env.nodeEnv,
+  });
 });
 
 function stop(signal) {
   server.close((error) => {
     if (error) {
-      console.error(`Failed to stop backend cleanly after ${signal}.`);
+      logger.error("backend_shutdown_failed", { signal, error });
       process.exitCode = 1;
       return;
     }

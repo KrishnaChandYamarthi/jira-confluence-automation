@@ -56,6 +56,14 @@ with a different request fingerprint.
 
 ## Checks
 
-Run `npm run build` for JavaScript syntax checks and `npm test` for the Node.js
-test suite. The PostgreSQL migration tests require the local Compose database and
-the private root `.env` settings.
+Run `npm run build` for JavaScript syntax checks. Run `npm run test:unit` for
+unit tests and `npm run test:http` for Supertest HTTP tests; `npm test` runs both
+plus PostgreSQL integration tests. The PostgreSQL migration tests require the
+local Compose database and the private root `.env` settings. Tests import the
+Express app without starting the production listener or requiring live provider
+credentials.
+
+Backend logs are newline-delimited JSON with timestamps, event names, and
+request/operation context. Credential-like fields are redacted, while request,
+response, and provider-content fields are omitted; thrown error messages and
+stacks are not written to logs.

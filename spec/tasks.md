@@ -106,7 +106,7 @@ hosting inputs remain gates as recorded in the source plan.
 
 ### T005 — Redacted logger and backend test harness
 
-- [ ] T005 [P] [Plan:1.4] Add structured redacted logging and configure backend unit and HTTP tests.
+- [x] T005 [P] [Plan:1.4] Add structured redacted logging and configure backend unit and HTTP tests.
 - **Requirements**: REQ-003, REQ-027, REQ-028, REQ-031, REQ-032
 - **Files**: `backend/src/observability/logger.js`, `backend/package.json`,
   `backend/tests/`

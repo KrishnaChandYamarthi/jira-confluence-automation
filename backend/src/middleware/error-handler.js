@@ -1,4 +1,5 @@
 import { ApiError } from "../errors/api-error.js";
+import { logger } from "../observability/logger.js";
 
 export function notFoundHandler(_request, _response, next) {
   next(new ApiError(404, "not_found", "The requested resource was not found."));
@@ -26,13 +27,10 @@ export function errorHandler(error, request, response, next) {
       "The request body exceeds the allowed size.",
     );
   } else if (!(error instanceof ApiError)) {
-    console.error(
-      JSON.stringify({
-        level: "error",
-        event: "request_failed",
-        requestId: request.requestId,
-      }),
-    );
+    logger.error("request_failed", {
+      requestId: request.requestId,
+      error,
+    });
     apiError = new ApiError(
       500,
       "internal_error",
